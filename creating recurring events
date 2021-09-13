@@ -1,0 +1,137 @@
+POST /calendar/v3/calendars/primary/events
+...
+
+{
+  "summary": "Appointment",
+  "location": "Somewhere",
+  "start": {
+    "dateTime": "2011-06-03T10:00:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "end": {
+    "dateTime": "2011-06-03T10:25:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "recurrence": [
+    "RRULE:FREQ=WEEKLY;UNTIL=20110701T170000Z",
+  ],
+  "attendees": [
+    {
+      "email": "attendeeEmail",
+      # Other attendee's data...
+    },
+    # ...
+  ],
+}
+
+// Modifying or deleting instances //
+PUT /calendar/v3/calendars/primary/events/instanceId
+...
+
+{
+  "kind": "calendar#event",
+  "id": "instanceId",
+  "etag": "instanceEtag",
+  "status": "cancelled",
+  "htmlLink": "https://www.google.com/calendar/event?eid=instanceEid",
+  "created": "2011-05-23T22:27:01.000Z",
+  "updated": "2011-05-23T22:27:01.000Z",
+  "summary": "Recurring event",
+  "location": "Somewhere",
+  "creator": {
+    "email": "userEmail"
+  },
+  "recurringEventId": "recurringEventId",
+  "originalStartTime": "2011-06-03T10:00:00.000-07:00",
+  "organizer": {
+    "email": "userEmail",
+    "displayName": "userDisplayName"
+  },
+  "start": {
+    "dateTime": "2011-06-03T10:00:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "end": {
+    "dateTime": "2011-06-03T10:25:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "iCalUID": "eventUID",
+  "sequence": 0,
+  "attendees": [
+    {
+      "email": "attendeeEmail",
+      "displayName": "attendeeDisplayName",
+      "responseStatus": "needsAction"
+    },
+    # ...
+    {
+      "email": "userEmail",
+      "displayName": "userDisplayName",
+      "responseStatus": "accepted",
+      "organizer": true,
+      "self": true
+    }
+  ],
+  "guestsCanInviteOthers": false,
+  "guestsCanSeeOtherGuests": false,
+  "reminders": {
+    "useDefault": true
+  }
+}
+
+# Updating the original recurring event to trim the instance list:
+
+PUT /calendar/v3/calendars/primary/events/recurringEventId
+...
+
+{
+  "summary": "Appointment",
+  "location": "Somewhere",
+  "start": {
+    "dateTime": "2011-06-03T10:00:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "end": {
+    "dateTime": "2011-06-03T10:25:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "recurrence": [
+    "RRULE:FREQ=WEEKLY;UNTIL=20110617T065959Z",
+  ],
+  "attendees": [
+    {
+      "email": "attendeeEmail",
+      # Other attendee's data...
+    },
+    # ...
+  ],
+}
+
+
+# Creating a new recurring event with the change applied:
+
+POST /calendar/v3/calendars/primary/events
+...
+
+{
+  "summary": "Appointment",
+  "location": "Somewhere else",
+  "start": {
+    "dateTime": "2011-06-17T10:00:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "end": {
+    "dateTime": "2011-06-17T10:25:00.000-07:00",
+    "timeZone": "America/Los_Angeles"
+  },
+  "recurrence": [
+    "RRULE:FREQ=WEEKLY;UNTIL=20110617T065959Z",
+  ],
+  "attendees": [
+    {
+      "email": "attendeeEmail",
+      # Other attendee's data...
+    },
+    # ...
+  ],
+}
