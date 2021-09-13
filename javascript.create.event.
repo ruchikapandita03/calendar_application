@@ -1,0 +1,91 @@
+//To create events//
+var event = {
+  'summary': 'Google I/O 2015',
+  'location': '800 Howard St., San Francisco, CA 94103',
+  'description': 'A chance to hear more about Google\'s developer products.',
+  'start': {
+    'dateTime': '2015-05-28T09:00:00-07:00',
+    'timeZone': 'America/Los_Angeles'
+  },
+  'end': {
+    'dateTime': '2015-05-28T17:00:00-07:00',
+    'timeZone': 'America/Los_Angeles'
+  },
+  'recurrence': [
+    'RRULE:FREQ=DAILY;COUNT=2'
+  ],
+  'attendees': [
+    {'email': 'lpage@example.com'},
+    {'email': 'sbrin@example.com'}
+  ],
+  'reminders': {
+    'useDefault': false,
+    'overrides': [
+      {'method': 'email', 'minutes': 24 * 60},
+      {'method': 'popup', 'minutes': 10}
+    ]
+  }
+};
+
+var request = gapi.client.calendar.events.insert({
+  'calendarId': 'primary',
+  'resource': event
+});
+
+request.execute(function(event) {
+  appendPre('Event created: ' + event.htmlLink);
+});
+
+// Add drive attachment to events using java//
+public static void addAttachment(Calendar calendarService, Drive driveService, String calendarId,
+    String eventId, String fileId) throws IOException {
+  File file = driveService.files().get(fileId).execute();
+  Event event = calendarService.events().get(calendarId, eventId).execute();
+
+  List<EventAttachment> attachments = event.getAttachments();
+  if (attachments == null) {
+    attachments = new ArrayList<EventAttachment>();
+  }
+  attachments.add(new EventAttachment()
+      .setFileUrl(file.getAlternateLink())
+      .setMimeType(file.getMimeType())
+      .setTitle(file.getTitle()));
+
+  Event changes = new Event()
+      .setAttachments(attachments);
+  calendarService.events().patch(calendarId, eventId, changes)
+      .setSupportsAttachments(true)
+      .execute();
+}
+
+// Add video and phone conference to events //
+
+var solution = event.conferenceData.conferenceSolution;
+
+var content = document.getElementById("content");
+var text = document.createTextNode("Join " + solution.name);
+var icon = document.createElement("img");
+icon.src = solution.iconUri;
+
+content.appendChild(icon);
+content.appendChild(text);
+
+// to request conference generation for an existing event //
+
+var eventPatch = {
+  conferenceData: {
+    createRequest: {requestId: "7qxalsvy0e"}
+  }
+};
+
+gapi.client.calendar.events.patch({
+  calendarId: "primary",
+  eventId: "7cbh8rpc10lrc0ckih9tafss99",
+  resource: eventPatch,
+  sendNotifications: true,
+  conferenceDataVersion: 1
+}).execute(function(event) {
+  console.log("Conference created for event: %s", event.htmlLink);
+});
+
+
